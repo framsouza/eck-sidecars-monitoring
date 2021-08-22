@@ -135,9 +135,12 @@ spec:
 In oder to be able to access Kibana using my own domain, I am using an ingress controller. With that, I will access Kibana via https://framsouza.co. If you want to know how to setup SAML configuration, you can take a look at [this article](https://github.com/framsouza/eck-saml-hot-warm-cold)
 
 
-## [Stack monitoring] (https://www.elastic.co/guide/en/kibana/current/xpack-monitoring.html#xpack-monitoring)
+### [Stack monitoring](https://www.elastic.co/guide/en/kibana/current/xpack-monitoring.html#xpack-monitoring)
 
 If you access your central monitoring cluster on Cloud and click on Stack Monitoring, you should see the following:
 
 <img width="1667" alt="Screenshot 2021-08-22 at 20 02 15" src="https://user-images.githubusercontent.com/16880741/130365348-472ba083-0c32-4d82-a72d-69afb31dfa86.png">
 
+All information you need to check regarding your production cluster, you can see it centralized in a single page, you can jump into Nodes, Indices or logs details, it will also provide pre buil dashboards and ILM configurations.
+
+Cheers!
