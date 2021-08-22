@@ -8,5 +8,4 @@ spec:
   elasticsearchRef:
     name: cluster1
   config:
-    monitoring.kibana.collection.enabled: false
     monitoring.ui.container.elasticsearch.enabled: true

@@ -94,13 +94,39 @@ That's all regarding the elasticsearch container, you don't need any other addit
               value: file
 ```
 
-### [metricbeat container](https://github.com/framsouza/eck-sidecars-monitoring/blob/759d08f22958ef428b4a78d35e2e8bb6f6895e05/es.yml#L35)
+### [metricbeat container](https://github.com/framsouza/eck-sidecars-monitoring/blob/main/es.yml#L35)
 
-Metricbeat is running version 7.14.0 and we saying the metricbeat.yml file should be read from the following path: /etc/metricbeat.yml. These args will be used to start the container.
+Metricbeat is running version 7.14.0 and we saying the metricbeat.yml file should be read from the following path: _/etc/metricbeat.yml_. These args will be used to start the container.
 
 Then  you will find a set of environment variables that are used on the metricbeat.yml / confimap-metricbeat.yml
 Once we have all the environments regarding user/pass and ULR, You will find a _volumeMounts_ block, which is used to mount the configmap and secrets.
 
 That's all about metricbeat, in summary it's composed of environment variables and volumes.
 
-### [filebeat container](https://github.com/framsouza/eck-sidecars-monitoring/blob/759d08f22958ef428b4a78d35e2e8bb6f6895e05/es.yml#L77)
+### [filebeat container](https://github.com/framsouza/eck-sidecars-monitoring/blob/main/es.yml#L77)
+
+As all the components of the stack, filebeat is running verstion 7.14.0, and the started file is located in _/etc/filebeat.yml_.
+As well as metricbeat, filebeat is also composed of environment variables and volumes.
+The environment variable is used to establish connections (definition of users and password) and the volumes are used to mount configuration files and ssl certificates.
+
+At the end of the session you will see _volumes_ and _volumeClaimTemplates_, the _volumes_ is used to define from where the volume must be mounted, and this session needs to be defined only once. Inside each container, you should refer to it on the _volumeMounts_ session.
+The _volumeClaimTemplate_ is used to define how many GB I will have to store elasticsearch data (adjust it adequately) 
+
+### [kibana.yml](https://github.com/framsouza/eck-sidecars-monitoring/blob/main/kibana.yml)
+
+Last by not least, kibana requires only the elasticsearchRef and monitoring configuration enabled.
+
+```
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana-cluster1
+spec:
+  version: 7.14.0
+  count: 1
+  elasticsearchRef:
+    name: cluster1
+  config:
+    monitoring.ui.container.elasticsearch.enabled: true
+```
+
