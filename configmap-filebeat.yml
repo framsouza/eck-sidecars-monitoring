@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap-filebeat
+  labels:
+    k8s-app: filebeat
+data:
+  filebeat.yml: |-
+    filebeat.modules:
+    - module: elasticsearch
+      server:
+        enabled: true
+        var.paths:
+          - /usr/share/elasticsearch/logs/*_server.json
+      gc:
+        enabled: true
+        var.paths:
+          - /usr/share/elasticsearch/logs/gc.log.[0-9]*
+          - /usr/share/elasticsearch/logs/gc.log
+          - /usr/share/elasticsearch/logs/gc.output.[0-9]*
+          - /usr/share/elasticsearch/logs/gc.output
+      audit:
+        enabled: true
+        var.paths:
+          - /usr/share/elasticsearch/logs/*_audit.json
+      slowlog:
+        enabled: true
+        var.paths:
+          - /usr/share/elasticsearch/logs/*_index_search_slowlog.json
+          - /usr/share/elasticsearch/logs/*_index_indexing_slowlog.json
+      deprecation:
+        enabled: true
+        var.paths:
+          - /usr/share/elasticsearch/logs/*_deprecation.json
+
+    processors:
+      - add_cloud_metadata: {}
+      - add_host_metadata: {}
+
+    setup.kibana:
+      host: 'https://${MONITOR_HOST}:${MONITOR_PORT}'
+      username: ${MONITOR_USERNAME}
+      password: ${MONITOR_PASSWORD}
+
+    cloud.id: "<YOUR-CLOUD-ID>
+    cloud.auth: "elastic:<ELASTIC-PASSWORD>"

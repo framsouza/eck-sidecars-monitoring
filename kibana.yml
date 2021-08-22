@@ -1,0 +1,12 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana-cluster1
+spec:
+  version: 7.14.0
+  count: 1
+  elasticsearchRef:
+    name: cluster1
+  config:
+    monitoring.kibana.collection.enabled: false
+    monitoring.ui.container.elasticsearch.enabled: true

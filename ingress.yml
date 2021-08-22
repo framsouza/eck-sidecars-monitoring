@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+  name: ingress
+spec:
+  tls:
+    - hosts:
+      - framsouza.co
+      secretName: framsouza-cert
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kibana-cluster1-kb-http
+            port:
+              number: 5601
+
