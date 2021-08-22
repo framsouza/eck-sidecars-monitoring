@@ -37,7 +37,7 @@ The configmap-filebeat.yml and configmap-metricbeat.yml file are respectively fi
 Here, I am enabling elasticsearch module and configuring in which directory filebeat will find the elasticsearch output logs regarding gc, audit, slowlogs, deprecation, and server logs. Be sure to adjust it accordingly with your elastichsearch logs files.
 As I mentioned, we are using an external monitoring cluster running in our Elastic Cloud, it means I am using the _cloud.id_ and _cloud.auth_ reference to send logs to my cluster running on Cloud and using processors to collect cloud and host metadata to enrich our data.
 
-### [configmap-metricbeat.yml](https://github.com/framsouza/eck-sidecars-monitoring/blob/main/configmap-metricbeat.yml
+### [configmap-metricbeat.yml](https://github.com/framsouza/eck-sidecars-monitoring/blob/main/configmap-metricbeat.yml)
 Same as filebeat, we need to enable the elasticsearch module in order to collect infromation and metrics about the engine. Here, I am defining some metricsets to be collect each 10s. As it's running as sidecar container, I am refering to Elasticsearch using localhost, 9200 port and using SSL certificate. The output is the monitoring cluster running on Cloud and instead of use _output.elasticsearch_ we should use _cloud.id_ and _cloud_auth_
 
 Once we created both configmaps, we are ready to deploy elasticsesarch.
@@ -68,4 +68,30 @@ spec:
       xpack.monitoring.elasticsearch.collection.enabled: false
 ```
 
+At the _podTemplate_ level, instead of change the _node.store.sllow.mmap_ I am increasing the _max_map_count_, you can read more about it [here](https://www.elastic.co/guide/en/cloud-on-k8s/1.7/k8s-virtual-memory.html).
+I am also giving 4Gi of memory elasticsearch container, it will automatically give me 2Gi of heap. There's also an environment variable defined called _ES_LOGS_STYPE_ this is for rolling file appender, you can also read more about it [here](https://github.com/elastic/elasticsearch/pull/65778)
 
+That's all regarding the elasticsearch container, you don't need any other additional information, now let's jump into metricbeat container definition.
+
+
+```
+    podTemplate:
+      spec:
+        initContainers:
+        - name: sysctl
+          securityContext:
+            privileged: true
+          command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+        containers:
+          - name: elasticsearch
+            resources:
+              requests:
+                memory: 4Gi
+              limits:
+                memory: 4Gi
+            env:
+            - name: ES_LOG_STYLE
+              value: file
+```
+
+### [metricbeat container](https://github.com/framsouza/eck-sidecars-monitoring/blob/759d08f22958ef428b4a78d35e2e8bb6f6895e05/es.yml#L35)
