@@ -32,10 +32,40 @@ These examples will contemplate and production environment running on ECK and se
 Before understand and deploy elasticsearch resource, we need to create first the metricbeat and filebeat confimap, if you deploy elasticsearch without deploy them first, we are going to get an error.
 The configmap-filebeat.yml and configmap-metricbeat.yml file are respectively filebeat and metricbeat yml files. This is where you should define the proper settings. ECK will mount and refer to it as a confimap and be mounted as a volume inside the elasticsearch container.
 
-### [configmap-filebeat.yml](https://github.com/framsouza/eck-sidecars-monitoring/configmap-filebeat.yml)
+### [configmap-filebeat.yml](https://github.com/framsouza/eck-sidecars-monitoring/blob/main/configmap-filebeat.yml)
 
 Here, I am enabling elasticsearch module and configuring in which directory filebeat will find the elasticsearch output logs regarding gc, audit, slowlogs, deprecation, and server logs. Be sure to adjust it accordingly with your elastichsearch logs files.
 As I mentioned, we are using an external monitoring cluster running in our Elastic Cloud, it means I am using the _cloud.id_ and _cloud.auth_ reference to send logs to my cluster running on Cloud and using processors to collect cloud and host metadata to enrich our data.
 
-### [configmap-metricbeat.yml](https://github.com/framsouza/eck-sidecars-monitoring/configmap-metricbeat.yml)
+### [configmap-metricbeat.yml](https://github.com/framsouza/eck-sidecars-monitoring/blob/main/configmap-metricbeat.yml
 Same as filebeat, we need to enable the elasticsearch module in order to collect infromation and metrics about the engine. Here, I am defining some metricsets to be collect each 10s. As it's running as sidecar container, I am refering to Elasticsearch using localhost, 9200 port and using SSL certificate. The output is the monitoring cluster running on Cloud and instead of use _output.elasticsearch_ we should use _cloud.id_ and _cloud_auth_
+
+Once we created both configmaps, we are ready to deploy elasticsesarch.
+
+### [es.yml](https://github.com/framsouza/eck-sidecars-monitoring/blob/main/es.yml)
+
+The name of my cluster is _cluster1_ (be more creative in your tests), running 3 nodes (7.14.0) 
+The http session is necessary because in the metricbeat configuration we are telling metricbeat to connect in elasticsearch using HTTPS, which means I am defining a custom domain name to be used with the self-signed certificate, in this case, _localhost_.
+At the configuration level, we are enabling elasticsearch monitoring and disabling the _xpack.monitoring.elasticsearch.collection.enabled_ because we are not interested in [legacy monitoring data](https://www.elastic.co/guide/en/elasticsearch/reference/7.9/collecting-monitoring-data.html)
+
+```
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: cluster1
+spec:
+  version: 7.14.0
+  http:
+    tls:
+      selfSignedCertificate:
+        subjectAltNames:
+        - dns: localhost 
+  nodeSets:
+  - name: elasticsearch
+    count: 3
+    config:
+      xpack.monitoring.collection.enabled: true
+      xpack.monitoring.elasticsearch.collection.enabled: false
+```
+
+
