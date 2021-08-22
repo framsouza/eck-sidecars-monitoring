@@ -130,3 +130,11 @@ spec:
     monitoring.ui.container.elasticsearch.enabled: true
 ```
 
+### [ingress.yml](https://github.com/framsouza/eck-sidecars-monitoring/blob/main/ingress.yml)
+
+In oder to be able to access Kibana using my own domain, I am using an ingress controller. With that, I will access Kibana via https://framsouza.co. If you want to know how to setup SAML configuration, you can take a look at [this article](https://github.com/framsouza/eck-saml-hot-warm-cold)
+
+
+## [Stack monitoring] (https://www.elastic.co/guide/en/kibana/current/xpack-monitoring.html#xpack-monitoring)
+
+If you access your central monitoring cluster on Cloud and click on Stack Monitoring, you should see the following:
