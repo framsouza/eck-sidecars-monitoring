@@ -1,7 +1,5 @@
 # eck-sidecars-monitoring
 
-_(Work in Progress)_
-
 This page will guide you through how to monitoring ECK clusters using filebeat and metricbeat as sidecar containers, sending monitoring information to an external monitoring cluster running on Elastic Cloud.
 As part of our best practices and recommendation, utilize an external monitoring cluster is always recommended, with that setup we avoid overload our current production environment with monitoring data. We also can run queries to collect monitoring/audit information without care about the performance impact on the production cluster.
 
