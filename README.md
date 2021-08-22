@@ -138,3 +138,6 @@ In oder to be able to access Kibana using my own domain, I am using an ingress c
 ## [Stack monitoring] (https://www.elastic.co/guide/en/kibana/current/xpack-monitoring.html#xpack-monitoring)
 
 If you access your central monitoring cluster on Cloud and click on Stack Monitoring, you should see the following:
+
+<img width="1667" alt="Screenshot 2021-08-22 at 20 02 15" src="https://user-images.githubusercontent.com/16880741/130365348-472ba083-0c32-4d82-a72d-69afb31dfa86.png">
+
