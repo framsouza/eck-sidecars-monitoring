@@ -68,7 +68,7 @@ spec:
       xpack.monitoring.elasticsearch.collection.enabled: false
 ```
 
-At the _podTemplate_ level, instead of change the _node.store.sllow.mmap_ I am increasing the _max_map_count_, you can read more about it [here](https://www.elastic.co/guide/en/cloud-on-k8s/1.7/k8s-virtual-memory.html).
+At the _podTemplate_ level, instead of change the _node.store.sllow.mmap_ I am increasing the _max_map_count_ (recommended for production environments), you can read more about it [here](https://www.elastic.co/guide/en/cloud-on-k8s/1.7/k8s-virtual-memory.html).
 I am also giving 4Gi of memory elasticsearch container, it will automatically give me 2Gi of heap. There's also an environment variable defined called _ES_LOGS_STYPE_ this is for rolling file appender, you can also read more about it [here](https://github.com/elastic/elasticsearch/pull/65778)
 
 That's all regarding the elasticsearch container, you don't need any other additional information, now let's jump into metricbeat container definition.
@@ -95,3 +95,12 @@ That's all regarding the elasticsearch container, you don't need any other addit
 ```
 
 ### [metricbeat container](https://github.com/framsouza/eck-sidecars-monitoring/blob/759d08f22958ef428b4a78d35e2e8bb6f6895e05/es.yml#L35)
+
+Metricbeat is running version 7.14.0 and we saying the metricbeat.yml file should be read from the following path: /etc/metricbeat.yml. These args will be used to start the container.
+
+Then  you will find a set of environment variables that are used on the metricbeat.yml / confimap-metricbeat.yml
+Once we have all the environments regarding user/pass and ULR, You will find a _volumeMounts_ block, which is used to mount the configmap and secrets.
+
+That's all about metricbeat, in summary it's composed of environment variables and volumes.
+
+### [filebeat container](https://github.com/framsouza/eck-sidecars-monitoring/blob/759d08f22958ef428b4a78d35e2e8bb6f6895e05/es.yml#L77)
