@@ -25,3 +25,17 @@ We do not recommend self-monitoring cluster, due to the fact it will share the p
 
 These examples will contemplate and production environment running on ECK and sending monitoring data to an external elasticseasrch running in our Elastic Cloud (ESS)
 
+*Keep in mind it will collect only elasticsearch monitoring data, it's related to the Stack Monitoring and not with your application data*.
+
+### First thing first
+
+Before understand and deploy elasticsearch resource, we need to create first the metricbeat and filebeat confimap, if you deploy elasticsearch without deploy them first, we are going to get an error.
+The configmap-filebeat.yml and configmap-metricbeat.yml file are respectively filebeat and metricbeat yml files. This is where you should define the proper settings. ECK will mount and refer to it as a confimap and be mounted as a volume inside the elasticsearch container.
+
+### [configmap-filebeat.yml](https://github.com/framsouza/eck-sidecars-monitoring/configmap-filebeat.yml)
+
+Here, I am enabling elasticsearch module and configuring in which directory filebeat will find the elasticsearch output logs regarding gc, audit, slowlogs, deprecation, and server logs. Be sure to adjust it accordingly with your elastichsearch logs files.
+As I mentioned, we are using an external monitoring cluster running in our Elastic Cloud, it means I am using the _cloud.id_ and _cloud.auth_ reference to send logs to my cluster running on Cloud and using processors to collect cloud and host metadata to enrich our data.
+
+### [configmap-metricbeat.yml](https://github.com/framsouza/eck-sidecars-monitoring/configmap-metricbeat.yml)
+Same as filebeat, we need to enable the elasticsearch module in order to collect infromation and metrics about the engine. Here, I am defining some metricsets to be collect each 10s. As it's running as sidecar container, I am refering to Elasticsearch using localhost, 9200 port and using SSL certificate. The output is the monitoring cluster running on Cloud and instead of use _output.elasticsearch_ we should use _cloud.id_ and _cloud_auth_
