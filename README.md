@@ -25,6 +25,32 @@ These examples will contemplate and production environment running on ECK and se
 
 *Keep in mind it will collect only elasticsearch monitoring data, it's related to the Stack Monitoring and not with your application data*.
 
+It's worth noticing that there are two ways to spin up sidecars, if your monitoring cluster is also running using ECK, you should use the following configuration:
+
+```
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: cluster1
+spec:
+  version: 7.14.0
+  monitoring:
+    logs:
+      elasticsearchRef:
+        namespace: monitoring-ns
+        name: my-logging-cluster
+    metrics:
+      elasticsearchRef:
+        namespace: monitoring-ns
+        name: my-metrics-cluster
+  nodeSets:
+  - name: elasticsearch
+    count: 3
+```
+
+Simple, right? In this example, we are sending monitoring data to an ESS cluster, and we should use it via podTemplates.
+If you are sending monitoring data to another ECK running on the same kubernetes cluster, please use the manifest above.
+
 ### First thing first
 
 Before understand and deploy elasticsearch resource, we need to create first the metricbeat and filebeat confimap, if you deploy elasticsearch without deploy them first, we are going to get an error.
