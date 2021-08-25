@@ -48,8 +48,7 @@ spec:
     count: 3
 ```
 
-Simple, right? In this example, we are sending monitoring data to an ESS cluster, and we should use it via podTemplates.
-If you are sending monitoring data to another ECK running on the same kubernetes cluster, please use the manifest above.
+Simple, right? You can find more information about this approach [here](https://github.com/framsouza/eck-stack-monitoring)
 
 ### First thing first
 
